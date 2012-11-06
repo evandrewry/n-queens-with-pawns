@@ -1,0 +1,23 @@
+================================================================
+                 COMS 4130, Fall 2012      
+                 Columbia University       
+              			      
+                 Homework #4
+
+                 Challenge Problem
+================================================================
+
+This homework doubles as the programming challenge.  All of the required files
+and test harness are included in this tarball.
+
+doit.sh: The script we will use to compile and run your code.  Do not modify.
+
+src/: Directory for source files.  See Solver.x10 for the interface to
+      solve(), the method you should optimize.  Recall that the problem is to
+      place N queens on an NxN board such that none of the queens can kill
+      eachother.  You are also given zero or more fixed-position pawns which
+      can block queens.  Given a board size and set of pawns, your code should
+      return the number of viable queen arrangements.  
+
+To turnin this assignment, rename your Solver.x10 to UNI_Solver.x10 and email
+it to Ivan (zw2229@columbia.edu).
