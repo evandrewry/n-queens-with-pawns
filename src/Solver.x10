@@ -1,23 +1,5 @@
 import x10.util.Timer;
-
-/**
-* This is the class that provides the solve() method.
-*
-* The assignment is to replace the contents of the solve() method
-* below with code that actually works :-)
- */
- public class Solver
- {
-     /**
-     * Solve a single 'N'-Queens with pawns problem.
-     *     'size' is 'N'.
-     *     'pawns' is an array of Squares with the locations of pawns.  The array may be of length zero.
-     *
-     * This function should return the number of solutions for the given configuration.
-     */
-     public def solve(size: int, pawns: Array[Square]{rank==1}) : int
-     {
-     /*
+         /*
          this.n = size;
          if (size == 8)
              {
@@ -37,8 +19,66 @@ import x10.util.Timer;
          return 27;
          */
 
+/**
+* This is the class that provides the solve() method.
+*
+* The assignment is to replace the contents of the solve() method
+* below with code that actually works :-)
+ */
+ public class Solver
+ {
+     /**
+     * Solve a single 'N'-Queens with pawns problem.
+     *     'size' is 'N'.
+     *     'pawns' is an array of Squares with the locations of pawns.  The array may be of length zero.
+     *
+     * This function should return the number of solutions for the given configuration.
+     */
+     public def solve(size: int, pawns: Array[Square]{rank==1}) : int
+     {
+
 
      }
+
+    private class ConfigurationGenerator
+    {
+        val availableSquares:Rail[Square];
+        val pawns:Rail[Square];
+        val n;
+
+        public def this(n:Int, pawns:Rail[Square])
+        {
+            n = n;
+            pawns = pawns;
+            availableSquares = invert(pawns, n);
+        }
+
+
+
+        public static def invert(input:Rail[Square], n:Int)
+        {
+            val out = new Rail[Square](n * n - input.size);
+            var i = 0;
+            for (x in 0..(n - 1)) {
+                for (y in 0..(n - 1)) {
+                    if(!contains(input, x, y) {
+                        out(i) = new Square(x, y);
+                        i++;
+                    }
+                }
+            }
+        }
+
+        public static def contains(input:Rail[Square], x:Int, y:Int)
+        {
+            for (i in input) {
+                if (input.x == x && input.y == y)
+                    return true;
+            }
+            return false;
+        }
+
+    }
 
      /* *
      * 
@@ -121,55 +161,66 @@ import x10.util.Timer;
 
              return true;
          }
+
          private def checkMajorDiagonal(x:Int, y:Int)
          {
-             for (var xx:Int = x + 1, var yy:Int = y - 1; xx < n && yy > 0; xx++, yy--) {
-                 val cur = configuration(xx, yy);
-                 if (cur == QUEEN)
-                     return false;
-                 else if (cur == PAWN)
-                     break;
-             }
-             for (var xx:Int = x - 1, var yy:Int = y + 1; xx > 0 && yy < n; xx--, yy++) {
-                 val cur = configuration(xx, yy);
-                 if (cur == QUEEN)
-                     return false;
-                 else if (cur == PAWN)
-                     break;
+             for (var xx:Int = x + 1, var yy:Int = y - 1;
+                  xx < n && yy > 0; xx++, yy--) {
+                  val cur = configuration(xx, yy);
+                  if (cur == QUEEN)
+                      return false;
+                  else if (cur == PAWN)
+                      break;
+              }
+              for (var xx:Int = x - 1, var yy:Int = y + 1;
+                   xx > 0 && yy < n; xx--, yy++) {
+                   val cur = configuration(xx, yy);
+                   if (cur == QUEEN)
+                       return false;
+                   else if (cur == PAWN)
+                       break;
+               }
+
+               return true;
+           }
+
+           private def checkMinorDiagonal(x:Int, y:Int)
+           {
+               for (var xx:Int = x + 1, var yy:Int = y + 1;
+                    xx < n && yy < n; xx++, yy++) {
+                    val cur = configuration(xx, yy);
+                    if (cur == QUEEN)
+                        return false;
+                    else if (cur == PAWN)
+                        break;
+                }
+
+                for (var xx:Int = x - 1, var yy:Int = y - 1;
+                     xx > 0 && yy > 0; xx--, yy--) {
+                     val cur = configuration(xx, yy);
+                     if (cur == QUEEN)
+                         return false;
+                     else if (cur == PAWN)
+                         break;
+                 }
+
+                 return true;
              }
 
-             return true;
-         }
-
-         private def checkMinorDiagonal(x:Int, y:Int)
-         {
-             for (var xx:Int = x + 1, var yy:Int = y + 1; xx < n && yy < n; xx++, yy++) {
-                 val cur = configuration(xx, yy);
-                 if (cur == QUEEN)
-                     return false;
-                 else if (cur == PAWN)
-                     break;
+             private checkQueens(x:Int, y:Int)
+             {
+                 return checkVertical(x, y) && 
+                 checkHorizontal(x, y) &&
+                 checkMajorDiagonal(x, y) &&
+                 checkMinorDiagonal(x, y);
              }
-
-             for (var xx:Int = x - 1, var yy:Int = y - 1; xx > 0 && yy > 0; xx--, yy--) {
-                 val cur = configuration(xx, yy);
-                 if (cur == QUEEN)
-                     return false;
-                 else if (cur == PAWN)
-                     break;
-             }
-
-             return true;
          }
 
          public def isSolution()
          {
              for (x in 0..(n - 1)) {
                  for (y in 0..(n - 1)) {
-                     if(!(checkVertical(x, y) &&
-                         checkHorizontal(x, y) &&
-                         checkMajorDiagonal(x, y) &&
-                         checkMinorDiagonal(x, y)))
+                     if(!(checkQueens(x, y)))
                          return false;
                  }
              }
@@ -177,5 +228,4 @@ import x10.util.Timer;
              return true;
          }
      }
-
  }
