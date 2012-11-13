@@ -17,6 +17,8 @@ import x10.util.Timer;
      */
      public def solve(size: int, pawns: Array[Square]{rank==1}) : int
      {
+     /*
+         this.n = size;
          if (size == 8)
              {
              return 92;
@@ -33,45 +35,146 @@ import x10.util.Timer;
          // for (i in pawns)
          //     Console.OUT.println(pawns(i));
          return 27;
+         */
+
+
      }
 
+     /* *
+     * 
+     *
+     */
      private struct Board
      {
-        static val EMPTY = 0;
+         static val EMPTY = 0;
          static val QUEEN = 1;
          static val PAWN = 2;
+         val n;
          val configuration:Array[Int]{self.rank == 2};
 
          public def this(n:Int, queens:Rail[Square], pawns:Rail[Square])
          {
-            this.configuration = new Array[Int](n, n);
-            for (i in queens) {
-                val q = queens(i);
-                if (configuration(q.x, q.y) != 0) {
-                    throw new RuntimeException("bad board");
-                } else {
-                    configuration(q.x, q.y) = QUEEN;
-                }
-            }
-            for (i in pawns) {
-                val p = pawns(i);
-                if (configuration(p.x, p.y) != 0) {
-                    throw new RuntimeException("bad board");
-                } else {
-                    configuration(p.x, p.y) = PAWN;
-                }
-            }
+             n = n;
+             configuration = new Array[Int](n, n);
+
+             for (i in queens) {
+                 val q = queens(i);
+                 if (configuration(q.x, q.y) != EMPTY) {
+                     throw new RuntimeException("bad board");
+                 } else {
+                     configuration(q.x, q.y) = QUEEN;
+                 }
+             }
+
+             for (i in pawns) {
+                 val p = pawns(i);
+                 if (configuration(p.x, p.y) != EMPTY) {
+                     throw new RuntimeException("bad board");
+                 } else {
+                     configuration(p.x, p.y) = PAWN;
+                 }
+             }
+         }
+
+         private def checkVertical(x:Int, y:Int)
+         {
+             //traverse upwards
+             for (var yy:Int = y + 1; yy < n; yy++) {
+                 val cur = configuration(x, yy);
+                 if (cur == QUEEN)
+                     return false;
+                 else if (cur == PAWN)
+                     break;
+             }
+
+             //traverse downwards
+             for (var yy:Int = y - 1; yy > 0; yy--) {
+                 val cur = configuration(x, yy);
+                 if (cur == QUEEN)
+                     return false;
+                 else if (cur == PAWN)
+                     break;
+             }
+
+             return true;
+         }
+
+         private def checkHorizontal(x:Int, y:Int)
+         {
+             //traverse rightwards
+             for (var xx:Int = x + 1; xx < n; xx++) {
+                 val cur = configuration(xx, y);
+                 if (cur == QUEEN)
+                     return false;
+                 else if (cur == PAWN)
+                     break;
+             }
+
+             //traverse leftwards 
+             for (var xx:Int = x - 1; xx > 0; xx--) {
+                 val cur = configuration(xx, y);
+                 if (cur == QUEEN)
+                     return false;
+                 else if (cur == PAWN)
+                     break;
+             }
+
+             return true;
+         }
+         private def checkMajorDiagonal(x:Int, y:Int)
+         {
+             for (var xx:Int = x + 1, var yy:Int = y - 1; xx < n && yy > 0; xx++, yy--) {
+                 val cur = configuration(xx, yy);
+                 if (cur == QUEEN)
+                     return false;
+                 else if (cur == PAWN)
+                     break;
+             }
+             for (var xx:Int = x - 1, var yy:Int = y + 1; xx > 0 && yy < n; xx--, yy++) {
+                 val cur = configuration(xx, yy);
+                 if (cur == QUEEN)
+                     return false;
+                 else if (cur == PAWN)
+                     break;
+             }
+
+             return true;
+         }
+
+         private def checkMinorDiagonal(x:Int, y:Int)
+         {
+             for (var xx:Int = x + 1, var yy:Int = y + 1; xx < n && yy < n; xx++, yy++) {
+                 val cur = configuration(xx, yy);
+                 if (cur == QUEEN)
+                     return false;
+                 else if (cur == PAWN)
+                     break;
+             }
+
+             for (var xx:Int = x - 1, var yy:Int = y - 1; xx > 0 && yy > 0; xx--, yy--) {
+                 val cur = configuration(xx, yy);
+                 if (cur == QUEEN)
+                     return false;
+                 else if (cur == PAWN)
+                     break;
+             }
+
+             return true;
          }
 
          public def isSolution()
          {
-            for (x in configuration) {
-                //check for vertical
-                //check for horizontal
-                //check for major diagonal
-                //check for minor diagonal
-            }
-            
+             for (x in 0..(n - 1)) {
+                 for (y in 0..(n - 1)) {
+                     if(!(checkVertical(x, y) &&
+                         checkHorizontal(x, y) &&
+                         checkMajorDiagonal(x, y) &&
+                         checkMinorDiagonal(x, y)))
+                         return false;
+                 }
+             }
+
+             return true;
          }
      }
 
