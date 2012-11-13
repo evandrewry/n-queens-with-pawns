@@ -36,24 +36,39 @@ import x10.util.Timer;
      */
      public def solve(size: int, pawns: Array[Square]{rank==1}) : int
      {
-
-
+        val cfg = new ConfigurationGenerator(size, pawns);
+        while(cfg.hasNext()){
+           if(cfg.next().isSolution()) {
+             numSolutions++;
+           }
+        }
      }
 
     private class ConfigurationGenerator
     {
         val availableSquares:Rail[Square];
         val pawns:Rail[Square];
-        val n;
+        val n:Int;
+        val fringe:ArrayList[Configuration] = new ArrayList[Configuration]();
 
         public def this(n:Int, pawns:Rail[Square])
         {
-            n = n;
-            pawns = pawns;
-            availableSquares = invert(pawns, n);
+            this.n = n;
+            this.pawns = pawns;
+            this.availableSquares = invert(pawns, n);
+            this.fringe.add(new Configuration(new Rail[Square](0), 0));
         }
 
+        public def hasNext()
+        {
+            return !fringe.isEmpty();
 
+        }
+
+        public def next()
+        {
+            
+        }
 
         public static def invert(input:Rail[Square], n:Int)
         {
@@ -61,7 +76,7 @@ import x10.util.Timer;
             var i = 0;
             for (x in 0..(n - 1)) {
                 for (y in 0..(n - 1)) {
-                    if(!contains(input, x, y) {
+                    if(!contains(input, x, y)) {
                         out(i) = new Square(x, y);
                         i++;
                     }
@@ -78,6 +93,17 @@ import x10.util.Timer;
             return false;
         }
 
+        private struct Configuration
+        {
+            val queens:Rail[Square];
+            val depth:Int;
+            def this(queens:Rail[Square], depth:Int)
+            {
+                queens = queens;
+                depth = depth;
+            }
+        }
+
     }
 
      /* *
@@ -89,13 +115,13 @@ import x10.util.Timer;
          static val EMPTY = 0;
          static val QUEEN = 1;
          static val PAWN = 2;
-         val n;
+         val n:Int;
          val configuration:Array[Int]{self.rank == 2};
 
          public def this(n:Int, queens:Rail[Square], pawns:Rail[Square])
          {
-             n = n;
-             configuration = new Array[Int](n, n);
+             this.n = n;
+             this.configuration = new Array[Int](n, n);
 
              for (i in queens) {
                  val q = queens(i);
@@ -164,7 +190,7 @@ import x10.util.Timer;
 
          private def checkMajorDiagonal(x:Int, y:Int)
          {
-             for (var xx:Int = x + 1, var yy:Int = y - 1;
+             for (var xx:Int = x + 1, yy:Int = y - 1;
                   xx < n && yy > 0; xx++, yy--) {
                   val cur = configuration(xx, yy);
                   if (cur == QUEEN)
@@ -172,7 +198,7 @@ import x10.util.Timer;
                   else if (cur == PAWN)
                       break;
               }
-              for (var xx:Int = x - 1, var yy:Int = y + 1;
+              for (var xx:Int = x - 1, yy:Int = y + 1;
                    xx > 0 && yy < n; xx--, yy++) {
                    val cur = configuration(xx, yy);
                    if (cur == QUEEN)
@@ -186,7 +212,7 @@ import x10.util.Timer;
 
            private def checkMinorDiagonal(x:Int, y:Int)
            {
-               for (var xx:Int = x + 1, var yy:Int = y + 1;
+               for (var xx:Int = x + 1, yy:Int = y + 1;
                     xx < n && yy < n; xx++, yy++) {
                     val cur = configuration(xx, yy);
                     if (cur == QUEEN)
@@ -195,7 +221,7 @@ import x10.util.Timer;
                         break;
                 }
 
-                for (var xx:Int = x - 1, var yy:Int = y - 1;
+                for (var xx:Int = x - 1, yy:Int = y - 1;
                      xx > 0 && yy > 0; xx--, yy--) {
                      val cur = configuration(xx, yy);
                      if (cur == QUEEN)
