@@ -1,5 +1,7 @@
 import x10.util.Timer;
 import x10.util.ArrayList;
+import x10.io.Console;
+
 /*
 this.n = size;
 if (size == 8)
@@ -83,7 +85,7 @@ public class Solver
         {
             val top = fringe.removeLast();
             if(!done && fringe.isEmpty()) {
-                fringe.add(new ConfigurationNode(new Rail[Square](1), 0));
+                fringe.add(new ConfigurationNode(new Rail[Square](0), 0));
             }
             this.done = fringe.isEmpty();
 
@@ -151,7 +153,9 @@ public class Solver
 
         def check(n:Int, pawns:Rail[Square])
         {
+            try{
             return new Board(n, queens, pawns).isSolution();
+          }catch(Exception){return false;}
         }
     }
 }
@@ -294,6 +298,7 @@ private class Board
 
         public def isSolution()
         {
+            print();
             for (x in 0..(n - 1)) {
                 for (y in 0..(n - 1)) {
                     if(!(checkQueens(x, y)))
@@ -302,6 +307,15 @@ private class Board
             }
 
             return true;
+        }
+
+        public def print(){
+            for (y in 0..(n - 1)) {
+                for (x in 0..(n - 1)) {
+                  Console.OUT.print("|" + configuration(x, y));
+                }
+                Console.OUT.print("|\n");
+            }
         }
     }
 }
