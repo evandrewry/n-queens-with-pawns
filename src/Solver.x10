@@ -83,16 +83,16 @@ public class Solver
 
         public def generateDepthFirst()
         {
-            val top = fringe.removeLast();
             if(!done && fringe.isEmpty()) {
                 fringe.add(new ConfigurationNode(new Array[Square](0), 0));
             }
-            this.done = fringe.isEmpty();
+            val top = fringe.removeLast();
 
             //check if top is a solution
             if(top.queens.size == n) {
+                this.done = fringe.isEmpty();
                 return top.check(n, pawns);
-            } else if (top.depth <= availableSquares.size) { //explore children
+            } else if (top.depth < availableSquares.size) { //explore children
             //configuration with no queen in next square
             if (!top.leftExplored) {
                 fringe.add(new ConfigurationNode(top.queens, top.depth + 1));
@@ -102,14 +102,15 @@ public class Solver
             //configuration with queen in next square
             if (!top.rightExplored) {
                 val queens = new Array[Square](top.queens.size + 1);
-                Array.copy(top.queens, queens);
-                queens(top.queens.size) = availableSquares(top.depth - 1);
+                Array.copy(top.queens, 0, queens, 0, top.queens.size);
+                queens(top.queens.size) = availableSquares(top.depth);
                 fringe.add(new ConfigurationNode(queens, top.depth + 1));
                 top.rightExplored = true;
             }
 
         }
         //didn't find a solution
+        this.done = fringe.isEmpty();
         return false;
     }
 
@@ -172,10 +173,12 @@ private class Board
     static val PAWN = 2;
     val n:Int;
     val configuration:Array[Int]{self.rank == 2};
+    val queens:Array[Square]{self.rank == 1};
 
     public def this(n:Int, queens:Array[Square]{self.rank == 1}, pawns:Array[Square]{self.rank == 1})
     {
         this.n = n;
+        this.queens = queens;
         this.configuration = new Array[Int]((0..(n-1)) * (0..(n - 1)));
 
         for (i in queens) {
@@ -299,13 +302,12 @@ private class Board
         public def isSolution()
         {
             print();
-            for (x in 0..(n - 1)) {
-                for (y in 0..(n - 1)) {
-                    if(!(checkQueens(x, y)))
+            for (i in queens) {
+                    if(!(checkQueens(queens(i).x, queens(i).y)))
                         return false;
-                }
             }
 
+            Console.OUT.print("###################\n");
             return true;
         }
 
@@ -316,6 +318,7 @@ private class Board
                 }
                 Console.OUT.print("|\n");
             }
+            Console.OUT.print("\n");
         }
     }
 }
