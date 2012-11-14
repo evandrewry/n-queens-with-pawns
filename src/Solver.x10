@@ -49,25 +49,46 @@ import x10.util.Timer;
         val availableSquares:Rail[Square];
         val pawns:Rail[Square];
         val n:Int;
-        val fringe:ArrayList[Configuration] = new ArrayList[Configuration]();
+        val fringe:ArrayList[ConfigurationNode] = new ArrayList[ConfigurationNode]();
 
         public def this(n:Int, pawns:Rail[Square])
         {
             this.n = n;
             this.pawns = pawns;
             this.availableSquares = invert(pawns, n);
-            this.fringe.add(new Configuration(new Rail[Square](0), 0));
+            this.fringe.add(new ConfigurationNode(new Rail[Square](0), 0));
         }
 
         public def hasNext()
         {
             return !fringe.isEmpty();
-
         }
 
         public def next()
         {
-            
+            while (hasNext()) {
+                if (fringe.getLast().queens.length == n) {
+                  return fringe.removeLast().queens;
+                } else {
+                  generate();
+                }
+            }
+        }
+        
+        public def generate()
+        {
+            val top = fringe.getLast();
+            if (!top.leftExplored && top.depth < availableSquares.size) {
+                fringe.add(new ConfigurationNode(top.queens), top.depth + 1);
+                top.leftExplored = true;
+            } else if (!top.rightExplored && top.depth < availableSquares.size) {
+                val queens = new Rail(top.size + 1)
+                Array.copy(top.queens, queens)
+                queens(top.size) = availableSquares(depth - 1)
+                fringe.add(new ConfigurationNode(queens), top.depth + 1);
+                top.rightExplored = true;
+            }
+
         }
 
         public static def invert(input:Rail[Square], n:Int)
@@ -93,14 +114,18 @@ import x10.util.Timer;
             return false;
         }
 
-        private struct Configuration
+        private struct ConfigurationNode
         {
             val queens:Rail[Square];
             val depth:Int;
+            val leftExplored:Boolean;
+            val rightExplored:Boolean;
             def this(queens:Rail[Square], depth:Int)
             {
                 queens = queens;
                 depth = depth;
+                leftExplored = false;
+                rightExplored = false;
             }
         }
 
