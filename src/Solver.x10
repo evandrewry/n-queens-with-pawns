@@ -51,13 +51,13 @@ public class Solver
 
     private class ConfigurationGenerator
     {
-        val availableSquares:Rail[Square];
-        val pawns:Rail[Square];
+        val availableSquares:Array[Square]{self.rank == 1};
+        val pawns:Array[Square]{self.rank == 1};
         val n:Int;
         val fringe:ArrayList[ConfigurationNode] = new ArrayList[ConfigurationNode]();
         var done:Boolean = false;
 
-        public def this(n:Int, pawns:Rail[Square])
+        public def this(n:Int, pawns:Array[Square]{self.rank == 1})
         {
             this.n = n;
             this.pawns = pawns;
@@ -85,7 +85,7 @@ public class Solver
         {
             val top = fringe.removeLast();
             if(!done && fringe.isEmpty()) {
-                fringe.add(new ConfigurationNode(new Rail[Square](0), 0));
+                fringe.add(new ConfigurationNode(new Array[Square](0), 0));
             }
             this.done = fringe.isEmpty();
 
@@ -101,7 +101,7 @@ public class Solver
 
             //configuration with queen in next square
             if (!top.rightExplored) {
-                val queens = new Rail[Square](top.queens.size + 1);
+                val queens = new Array[Square](top.queens.size + 1);
                 Array.copy(top.queens, queens);
                 queens(top.queens.size) = availableSquares(top.depth - 1);
                 fringe.add(new ConfigurationNode(queens, top.depth + 1));
@@ -109,13 +109,13 @@ public class Solver
             }
 
         }
-            //didn't find a solution
-            return false;
+        //didn't find a solution
+        return false;
     }
 
-    private def invert(input:Rail[Square], n:Int)
+    private def invert(input:Array[Square]{self.rank == 1}, n:Int)
     {
-        val out = new Rail[Square](n * n - input.size);
+        val out = new Array[Square](n * n - input.size);
         var i:Int = 0;
         for (x in 0..(n - 1)) {
             for (y in 0..(n - 1)) {
@@ -128,7 +128,7 @@ public class Solver
         return out;
     }
 
-    private def contains(input:Rail[Square], x:Int, y:Int)
+    private def contains(input:Array[Square]{self.rank == 1}, x:Int, y:Int)
     {
         for (i in input) {
             if (input(i).x == x && input(i).y == y)
@@ -139,23 +139,23 @@ public class Solver
 
     private class ConfigurationNode
     {
-        val queens:Rail[Square];
+        val queens:Array[Square]{self.rank == 1};
         val depth:Int;
         var leftExplored:Boolean;
         var rightExplored:Boolean;
-        def this(queens:Rail[Square], depth:Int)
-        {
+        def this(queens:Array[Square]{self.rank == 1}, depth:Int)
+            {
             this.queens = queens;
             this.depth = depth;
             this.leftExplored = false;
             this.rightExplored = false;
         }
 
-        def check(n:Int, pawns:Rail[Square])
-        {
+        def check(n:Int, pawns:Array[Square]{self.rank == 1})
+            {
             try{
-            return new Board(n, queens, pawns).isSolution();
-          }catch(Exception){return false;}
+                return new Board(n, queens, pawns).isSolution();
+            }catch(Exception){return false;}
         }
     }
 }
@@ -173,7 +173,7 @@ private class Board
     val n:Int;
     val configuration:Array[Int]{self.rank == 2};
 
-    public def this(n:Int, queens:Rail[Square], pawns:Rail[Square])
+    public def this(n:Int, queens:Array[Square]{self.rank == 1}, pawns:Array[Square]{self.rank == 1})
     {
         this.n = n;
         this.configuration = new Array[Int]((0..(n-1)) * (0..(n - 1)));
@@ -181,7 +181,7 @@ private class Board
         for (i in queens) {
             val q = queens(i);
             if (configuration(q.x, q.y) != EMPTY) {
-                throw new RuntimeException("bad board");
+                throw new Exception("bad board");
             } else {
                 configuration(q.x, q.y) = QUEEN;
             }
@@ -190,7 +190,7 @@ private class Board
         for (i in pawns) {
             val p = pawns(i);
             if (configuration(p.x, p.y) != EMPTY) {
-                throw new RuntimeException("bad board");
+                throw new Exception("bad board");
             } else {
                 configuration(p.x, p.y) = PAWN;
             }
@@ -312,7 +312,7 @@ private class Board
         public def print(){
             for (y in 0..(n - 1)) {
                 for (x in 0..(n - 1)) {
-                  Console.OUT.print("|" + configuration(x, y));
+                    Console.OUT.print("|" + configuration(x, y));
                 }
                 Console.OUT.print("|\n");
             }
