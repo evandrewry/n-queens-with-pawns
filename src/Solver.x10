@@ -21,8 +21,8 @@ public class Solver
     {
         var numSolutions:Int = 0;
         val cfg = new ConfigurationGenerator(size, pawns);
-        while (cfg.fringe.size() < Runtime.NTHREADS && cfg.hasNext()) {
-            if(cfg.generateDepthFirst()) {
+        while (cfg.fringe.size() < Runtime.NTHREADS * 8 && cfg.hasNext()) {
+            if(cfg.generateBreadthFirst()) {
                 numSolutions++;
             }
         }
@@ -38,7 +38,6 @@ public class Solver
             }
             numSolutions = solutions.reduce((a:Int, b:Int) => (a + b), numSolutions);
         }
-        Console.OUT.print("NUM SOLUTIONS:" + numSolutions +"\n");
         return numSolutions;
     }
 
@@ -81,6 +80,42 @@ public class Solver
                 }
             }
         }*/
+
+        public def generateBreadthFirst()
+        {
+            if(!done && fringe.isEmpty()) {
+                fringe.add(new ConfigurationNode(new Array[Square](0), 0));
+            }
+
+            val top = fringe.removeFirst();
+            this.done = fringe.isEmpty();
+
+            //check if top is a solution
+            if(top.queens.size == n) {
+                return top.check(n, pawns);
+            } else if (top.depth < availableSquares.size) {
+                //explore children, should do something with top.queens.size here to optimize
+                //configuration with no queen in next square
+                val x = new ConfigurationNode(top.queens, top.depth + 1);
+                fringe.add(x);
+                this.done = false;
+
+                //configuration with queen in next square
+                val queens = new Array[Square](top.queens.size + 1);
+                Array.copy(top.queens, 0, queens, 0, top.queens.size);
+                queens(top.queens.size) = availableSquares(top.depth);
+                val y = new ConfigurationNode(queens, top.depth + 1);
+                if (y.check(n, pawns) && y.queens.size == n) {
+                    return true;
+                } else if (y.check(n, pawns)) {
+                    fringe.add(y);
+                    this.done = false;
+                }
+
+            }
+            //didn't find a solution
+            return false;
+        }
 
         public def generateDepthFirst()
         {

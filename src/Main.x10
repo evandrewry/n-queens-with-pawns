@@ -91,6 +91,7 @@ public class Main
             val solutions = solver.solve(input.size, input.pawns);
             val end       = Timer.milliTime();
             var time_in_millis: long = end - start;
+            Console.OUT.println("\tComputed answer: " + solutions + " took " + time_in_millis + "ms");
 
             if (solutions != input.solutions)
             {
