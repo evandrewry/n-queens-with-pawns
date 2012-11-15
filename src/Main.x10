@@ -42,7 +42,7 @@ public class Main
     public static def main(Array[String])
     {
         val INPUTS = new Array[Inputs](0..(BENCHMARK_INPUT_COUNT - 1));
-        INPUTS(0) = Inputs(8, new Array[Square](6..5), 92, 1000.0f);    // No pawns (X10 idiom for zero length array).
+        INPUTS(0) = Inputs(5, new Array[Square](6..5), 92, 1000.0f);    // No pawns (X10 idiom for zero length array).
         INPUTS(1) = Inputs(9, new Array[Square](0..0), 108, 2000.0f);    // One pawn, default value location.
             val SQUARE_ARRAY_2 = new Array[Square](0..1);
             SQUARE_ARRAY_2(0) = Square(2,3); 
@@ -94,7 +94,7 @@ public class Main
 
             if (solutions != input.solutions)
             {
-                Console.OUT.println("\tComputed answer: INCORRECT!!!!!!!!!!!!!!!!!!!!!");
+                Console.OUT.println("\tComputed answer: " + solutions + " INCORRECT!!!!!!!!!!!!!!!!!!!!!");
                 throw new Exception("Wrong answer");
             }
 

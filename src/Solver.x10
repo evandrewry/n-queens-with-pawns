@@ -42,10 +42,8 @@ public class Solver
         var numSolutions:Int = 0;
         val cfg = new ConfigurationGenerator(size, pawns);
         while (cfg.fringe.size() < Runtime.NTHREADS && cfg.hasNext()) {
-            Console.OUT.print("fringe size: " + cfg.fringe.size());
             if(cfg.generateDepthFirst()) {
                 numSolutions++;
-                Console.OUT.print("###################\n");
             }
         }
         if (cfg.hasNext()) {
@@ -55,7 +53,6 @@ public class Solver
                 while (partialcfg.hasNext()) {
                     if(partialcfg.generateDepthFirst()) {
                         solutions(i) = 1 + solutions(i);
-                        Console.OUT.print("###################\n");
                     }
                 }
             }
@@ -313,7 +310,7 @@ public class Solver
 
         public def isSolution()
         {
-            print();
+            //print();
             for (i in queens) {
                 if(!(checkQueens(queens(i).x, queens(i).y)))
                     return false;
