@@ -92,21 +92,19 @@ public class Solver
             if(top.queens.size == n) {
                 this.done = fringe.isEmpty();
                 return top.check(n, pawns);
-            } else if (top.depth < availableSquares.size) { //explore children
+            } else if (top.depth < availableSquares.size) {
+            //explore children, should do something with top.queens.size here to optimize
             //configuration with no queen in next square
-            if (!top.leftExplored) {
-                fringe.add(new ConfigurationNode(top.queens, top.depth + 1));
-                top.leftExplored = true;
-            }
+            val x = new ConfigurationNode(top.queens, top.depth + 1);
+            fringe.add(x);
 
             //configuration with queen in next square
-            if (!top.rightExplored) {
-                val queens = new Array[Square](top.queens.size + 1);
-                Array.copy(top.queens, 0, queens, 0, top.queens.size);
-                queens(top.queens.size) = availableSquares(top.depth);
-                fringe.add(new ConfigurationNode(queens, top.depth + 1));
-                top.rightExplored = true;
-            }
+            val queens = new Array[Square](top.queens.size + 1);
+            Array.copy(top.queens, 0, queens, 0, top.queens.size);
+            queens(top.queens.size) = availableSquares(top.depth);
+            val y = new ConfigurationNode(queens, top.depth + 1);
+            if (y.check(n, pawns))
+                fringe.add(y);
 
         }
         //didn't find a solution
@@ -142,21 +140,15 @@ public class Solver
     {
         val queens:Array[Square]{self.rank == 1};
         val depth:Int;
-        var leftExplored:Boolean;
-        var rightExplored:Boolean;
         def this(queens:Array[Square]{self.rank == 1}, depth:Int)
             {
             this.queens = queens;
             this.depth = depth;
-            this.leftExplored = false;
-            this.rightExplored = false;
         }
 
         def check(n:Int, pawns:Array[Square]{self.rank == 1})
             {
-            try{
                 return new Board(n, queens, pawns).isSolution();
-            }catch(Exception){return false;}
         }
     }
 }
