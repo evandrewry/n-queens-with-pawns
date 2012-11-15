@@ -263,80 +263,73 @@ public class Solver
 
         private def checkMinorDiagonal(x:Int, y:Int)
         {
-            for (var xx:Int = x + 1, yy:Int = y - 1;
-                 xx < n && yy >= 0; xx++, yy--) {
-                 val cur = configuration(xx, yy);
-                 if (cur == QUEEN)
-                     return false;
-                 else if (cur == PAWN)
-                     break;
-                 Console.OUT.print(xx + ", " + yy + " fine for queen at " + x + ", " + y + "\n");
-             }
-             for (var xx:Int = x - 1, yy:Int = y + 1;
-                  xx >= 0 && yy < n; xx--, yy++) {
-                  val cur = configuration(xx, yy);
-                  if (cur == QUEEN)
-                      return false;
-                  else if (cur == PAWN)
-                      break;
-                  Console.OUT.print(xx + ", " + yy + " fine for queen at " + x + ", " + y + "\n");
-              }
+            for (var xx:Int = x + 1, yy:Int = y - 1; xx < n && yy >= 0; xx++, yy--) {
+                val cur = configuration(xx, yy);
+                if (cur == QUEEN)
+                    return false;
+                else if (cur == PAWN)
+                    break;
+            }
+            for (var xx:Int = x - 1, yy:Int = y + 1; xx >= 0 && yy < n; xx--, yy++) {
+                val cur = configuration(xx, yy);
+                if (cur == QUEEN)
+                    return false;
+                else if (cur == PAWN)
+                    break;
+            }
 
-              Console.OUT.print("major diagonal fine\n");
-              return true;
-          }
+            return true;
+        }
 
-          private def checkMajorDiagonal(x:Int, y:Int)
-          {
-              for (var xx:Int = x + 1, yy:Int = y + 1;
-                   xx < n && yy < n; xx++, yy++) {
-                   val cur = configuration(xx, yy);
-                   if (cur == QUEEN)
-                       return false;
-                   else if (cur == PAWN)
-                       break;
-               }
+        private def checkMajorDiagonal(x:Int, y:Int)
+        {
+            for (var xx:Int = x + 1, yy:Int = y + 1; xx < n && yy < n; xx++, yy++) {
+                val cur = configuration(xx, yy);
+                if (cur == QUEEN)
+                    return false;
+                else if (cur == PAWN)
+                    break;
+            }
 
-               for (var xx:Int = x - 1, yy:Int = y - 1;
-                    xx >= 0 && yy >= 0; xx--, yy--) {
-                    val cur = configuration(xx, yy);
-                    if (cur == QUEEN)
-                        return false;
-                    else if (cur == PAWN)
-                        break;
+            for (var xx:Int = x - 1, yy:Int = y - 1; xx >= 0 && yy >= 0; xx--, yy--) {
+                val cur = configuration(xx, yy);
+                if (cur == QUEEN)
+                    return false;
+                else if (cur == PAWN)
+                    break;
 
+            }
+
+            return true;
+        }
+
+        private def checkQueens(x:Int, y:Int)
+        {
+            return checkVertical(x, y) && 
+            checkHorizontal(x, y) &&
+            checkMajorDiagonal(x, y) &&
+            checkMinorDiagonal(x, y);
+        }
+
+        public def isSolution()
+        {
+            print();
+            for (i in queens) {
+                if(!(checkQueens(queens(i).x, queens(i).y)))
+                    return false;
+            }
+
+            return true;
+        }
+
+        public def print(){
+            for (y in 0..(n - 1)) {
+                for (x in 0..(n - 1)) {
+                    Console.OUT.print("|" + configuration(x, y));
                 }
-
-                return true;
+                Console.OUT.print("|\n");
             }
-
-            private def checkQueens(x:Int, y:Int)
-            {
-                return checkVertical(x, y) && 
-                checkHorizontal(x, y) &&
-                checkMajorDiagonal(x, y) &&
-                checkMinorDiagonal(x, y);
-            }
-
-            public def isSolution()
-            {
-                print();
-                for (i in queens) {
-                    if(!(checkQueens(queens(i).x, queens(i).y)))
-                        return false;
-                }
-
-                return true;
-            }
-
-            public def print(){
-                for (y in 0..(n - 1)) {
-                    for (x in 0..(n - 1)) {
-                        Console.OUT.print("|" + configuration(x, y));
-                    }
-                    Console.OUT.print("|\n");
-                }
-                Console.OUT.print("\n");
-            }
+            Console.OUT.print("\n");
         }
     }
+}
