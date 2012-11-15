@@ -2,26 +2,6 @@ import x10.util.Timer;
 import x10.util.ArrayList;
 import x10.io.Console;
 
-/*
-this.n = size;
-if (size == 8)
-    {
-    return 92;
-}
-else if (size == 9)
-    {
-    return 108;
-}
-else if (size == 10)
-    {
-    return 524;
-}
-
-// for (i in pawns)
-//     Console.OUT.println(pawns(i));
-return 27;
-*/
-
 /**
 * This is the class that provides the solve() method.
 *
@@ -310,12 +290,12 @@ public class Solver
 
         public def isSolution()
         {
-            //print();
             for (i in queens) {
                 if(!(checkQueens(queens(i).x, queens(i).y)))
                     return false;
             }
 
+            //print();
             return true;
         }
 
